@@ -1,0 +1,245 @@
+QT5
+
+//  example source code was contained in the directory which has same name.
+//  more methods for a class is defined in header.
+
+Chapter 1 : Hello World
+    #include<QtWidgets/QApplication>
+    #include<QtWidgets/QLabel>
+
+    int main(int argc, char *argv[])
+    {
+      QApplication app(argc, argv);
+      QLabel label("Hello World");
+      label.show();
+      return QApplication::exec();
+    }
+      
+
+Chapter 2 : Creating Widgets and Layouts
+    Widgets :
+      Widgets are the graphical components with which we construct user interfaces.
+      Information is passed to widgets by way of events.(e.g. textbox)
+
+      Every widget can have a parent widget or children widgets,and widgets that do not have a parent
+      widget become a window when the show() function is called on them.
+
+      Figure of Qt programming classes inheritance : (TOP -> BOTTON)
+        QObject
+	  (QThread, QWidget)
+	  	    QWidget
+		      (QAbstractButton, QFrame, QProgressBar)
+		      QAbstractButton
+		        (QCheckBox, QPushButton, QRadioButton)
+		      QFrame
+		        (QAbstractScrollArea, QLabel)
+			QAbstractScrollArea
+			  (QGraphicsView, QTextEdit)
+
+      #  class QWidget : <inherit method> QObject
+      #  class QLabel : public QFrame
+      #  ...
+
+      QObject class contains the mechanisms of signals and slots and event management and etc.
+      A lot of classes inherit from QObject.
+
+      QWidget class contains the shared common behavior are grouped together.
+
+      QCheckBox QPushButton QRadioButton are all buttons of the same kind and inherit from QAbstractButton.
+
+      QAbstractButton holds properties and functions that are shared by all buttons,this principle also
+      applies to QAbstractScrollArea and QGraphicsView and QTextEdit.
+
+      #  if unspecified parent widget for a widget,then its parent widget would be setted to NULL(no parent).
+      #  when displaying such a widget,it will be enclosed in a window on account of this reasoning.
+
+      Functions and Type :
+        Class QString : <QtCore/QString>
+          QString is a class for the case when working with strings.
+	  It has a host of functionalities not avaiable in C++ string.
+
+	Class QFont : <QtGui/QFont>
+	  Qt program font setting controller.
+
+	class QWidget::
+	  void setToolTip(const QString &);
+	    set tip text for widget.
+
+	  void setFont(const QFont &);
+	    set font to the label for display.
+
+	class QLabel::
+	  void setAlignment(Qt::Alignment);
+	    set alignment for the label when displaying.
+
+	Qt::AlignCenter :
+	  a constant to specify center align.
+
+    Layout :
+      Layout inheritance :
+        QObject QLayoutItem  <QLayoutItem is a abstract base class>
+	  (QLayout          )
+	  QLayout
+	    (QBoxLayout, QFormLayout, QGridLayout, QStackedLayout)
+	    QBoxLayout
+	      (QHBoxLayout, QVBoxLayout)
+
+        QFormLayout class manages forms of input widgets and their associated labels.
+	QGridLayout class lays out widgets in a grid.
+	QStackedLayout class provides a stack of widgets where only one widget is visible at a time.
+	QVBoxLayout class lines up widgets vertically.
+	QHBoxLayout class lines up widgets horizontally.
+	
+	Reasons for need layout :
+	  1>  to allow us to display more than one widget.
+	  2>  to present the many widgets in our interface nicely and intuitively to allow
+	      the UI to be useful.
+
+      QGridLayout :
+        QGridLayout is used to arrange widgets by specifying the number of rows and columns that will be
+	filled up by multiple widgets.
+
+	it has style like this chart :
+	  <string(head field)> <widget1> ... 
+	  ...
+	  <string(head field)> <widget1> ... 
+	
+	//  qgridlayout produces grid layout in another words is grid table.
+	
+
+        Functions and Type : 
+	  Class QLayoutItem : <QtWidgets/QLayoutItem>
+	    This class as abstract base class in hierarchy.
+	    class QLayout public inherit from it.
+
+          Class QGridLayout : <QtWidgets/QGridLayout>
+	    This class public inherit from QLayout.It can make table style layout for qt program.
+	    
+	  class QGridLayout::
+	    inline void addWidget(QWidget *w);
+	    void addWidget(QWidget *, int row, int column, Qt::Alignment = Qt::Alignment());
+	    void addWidget(QWidget *, int row, int column, int rowSpan, int columnSpan);
+	      addWidget() method add a QtWidget into QGridLayout,the items would be arranged with table style.
+	      the widget was added how to stretch out is conform to the arguments rowSpan and columnSpan.
+
+	  Class QWidget : <QtWidgets/QWidget>
+	    This class is the qt widget in hierarchy.
+
+	  class QWidget::
+	    void setLayout(QLayout *);
+	      setLayout() method put a QLayout in QWidget.can declare a QWidget then put layout in it,and
+	      call show() to let it becomes a main window.
+
+	  Class QLineEdit : <QtWidgets/QLineEdit>
+	    this class provides the featrue of edit text on line(i/o box).
+	    //  could set echo mode for QLineEdit,it supports :
+	    //    Normal, NoEcho, Password, PasswordEchoOnEdit
+	    //  via invoke void setEchoMode(EchoMode);
+	    //  via invoke void setPlaceholderText(const QString &); could place hint text on line.
+
+	  Class QSpinBox : <QtWidgets/QSpinBox>
+	    this class provides spin box that is the qt widget,user can use mouse to select a number
+	    from the given range eazily.
+	    //  void setRange(start, end); [start, end]
+
+	  Class QComboBox : <QtWidgets/QComboBox>
+	    this class provides combobox the qt widget,user can select string from the pre-defined texts.
+
+	  class QCombox::
+	    inline void addItems(const QStringList &texts);
+	      addItems() method add qt string list to combobox.
+
+	  Class QStringList : <QtCore/QStringList>
+	    this class is alike at c++ stl vector that is type of std::vector<std::string>.
+
+      QFormLayout :
+        It can simply place a number of widgets together in a two-column layout.
+	The layout it could made is like this chart :
+	  <string> | <widget>
+	  ...        ...
+	  name       <QLineEdit>
+	  ...        ...
+
+        //  qformlayout produces form layout in another words is key-value table.	    
+
+        Functions and Type :
+	  class QFormLayout : public QLayout; <QtWidgets/QFormLayout>
+
+	  class QFormLayout :
+	    void addRow(QWidget *label, QWidget *field);
+	    void addRow(QWidget *label, QLayout *field);
+	    void addRow(const QString &labelText, QWidget *field);
+	    void addRow(const QString &labelText, QLayout *field);
+	    void addRow(QWidget *widget);
+	    void addRow(QLayout *layout);
+	      addRow() methods add a row to layout.
+
+	    void insertRow(int row, QWidget *label, QWidget *field);
+	    void insertRow(int row, QWidget *label, QLayout *field);
+	    void insertRow(int row, const QString &labelText, QWidget *field);
+	    ...
+	      insertRow() methods can insert a row after the specified row.
+
+	    void removeRow(int row);
+	    void removeRow(QWidget *widget);
+	    void removeRow(QLayout *layout);
+	      removeRow() methods remove a row from qformlayout.
+
+	    void setLabelAlignment(Qt::Alignment alignment);
+	    void setFormAlignment(Qt::Alignment alignment);
+	    Qt::Alignment labelAlignment() const;
+	    Qt::Alignment formAlignment() const;
+	      how to align label and field.
+
+	    //  more methods in header.
+      
+      Layouts with direction :
+        some layouts that provide direction of growth when widgets are added to them,
+	and could set alignment for all widgets in a layout horizontally or vertically.
+
+      QVBoxLayout :
+        all widgets added into QVBoxLayout are aligned vertically and they are packed in the layout
+	from top to bottom.
+	the style is like this chart :
+	  --  top     --  
+	  <widget1>
+	  <widget2>
+	  <widget3>
+	  ...
+	  --  bottom  --
+
+        Functions and Type :
+	  class QVBoxLayout : public QBoxLayout;  <QtWidgets/QVBoxLayout>
+	  class QBoxLayout : public QLayout;      <QtWidgets/QBoxLayout>
+
+	  class QBoxLayout :
+	    Direction direction() const;
+	    void setDirection(Direction);
+	    enum Direction { LeftToRight, RightToLeft, TopToBottom,
+	    	 	     BottomToTop, Down = TopToBottom, Up = BottomToTop};
+	      direction control.
+
+	    void addWidget(QWidget *, int stretch  = 0, Qt::Alignment alignment = Qt::Alignment());
+	      add a QtWidget into BoxLayout.
+
+	    void addLayout(QLayout *layout, int stretch = 0);
+	      add a QtLayout into BoxLayout.
+
+	    void addItem(QLayoutItem *) override;
+	      add QLayoutItem into BoxLayout.
+
+
+      QHBoxLayout :
+        QHBoxLayout is similar as QVBoxLayout but it is stretch horizontally.
+	it packs layout through left to right or right to left.
+	the style is like this chart :
+	  |    |			|Right|
+	  |Left|<Widget1> <Widget2> ... |Right|
+	  |    |	  	    	|Right|
+
+	Functions and Type :
+	  class QHBoxLayout : public QBoxLayout;  <QtWidgets/QHBoxLayout>
+	    it hasnt internal methods exclude constructor and destructor.all methods inherited from QBoxLayout.
+
+
+        
