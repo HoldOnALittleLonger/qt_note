@@ -242,4 +242,65 @@ Chapter 2 : Creating Widgets and Layouts
 	    it hasnt internal methods exclude constructor and destructor.all methods inherited from QBoxLayout.
 
 
-        
+Chapter 3 : Working with Signals and Slots
+    Improve the usable to application,have to use signal check its status to prevent some wrong case.
+    Understanding the concept behind signals and slots Learning the different ways to connect singals and slots.
+
+    Every action is happened would be registered,and provided ample code has been written,it will be executed as a
+    reaction.
+    One way to implement the ability to react to an action that has occurred is by using the design pattern called
+    the "Observer Pattern".
+
+    Observer Pattern :
+      an observable object communicates its state change to other objects that are observing it.
+      A : object be observed
+      B : object it observing A
+
+      if B want to be notified of a state change of A,it first has to identify that object(A) and register itself(B) as one
+      of the objects that should receive such notification of the state change.
+      while A' state changed,A would notify the objects in a list all object each want to be notified by A for 
+      state change.
+
+    Signals and Slots :
+      In Qt,action-response scheme is handled by signals and slots.
+      
+      Signal :
+        A signal is a message that is passed to communicate that the state of an object has changed.
+	This message may carry information about the change that has occurred.
+	Sometimes,a signal may carry no extra information such as a button click.
+
+      Slot :
+        A slot is a specific function of an object that is called whenever a certain signal has been emitted.
+	(alike of linux signal handle function)
+
+      #  Signals and slots have to be connected(in code).Without writing code to connect a signal and a slot,
+         they will exist as independent entities.
+	 Most of widgets in Qt come with a number of signals and slots,but there could customise user-defined
+	 signals and slots.
+
+      For to connect signal and slot,have to call a static method connect() in QObject.
+      It takes four arguments,
+        a1 -> pointer of Object A - observed object
+	a2 -> Signal              - signal A would deliver
+	a3 -> pointer of Object B - observing object
+	a4 -> Slot                - reaction while B received the signal @a2
+
+        <QtCore/QObject>
+        static QMetaObject::Connection connect(const QObject *sender, const char *signal,
+	       			       	       const QObject *receiver, const char *method,
+					       Qt::ConnectionType = Qt::AutoConnection);
+        static QMetaObject::Connection connect(const QObject *sender, const QMetaMethod &signal,
+	       			       	       const QObject *receiver, const QMetaMethod &method,
+					       Qt::ConnectionType = Qt::AutoConnection);
+	inline QMetaObject::Connection connect(const QObject *sender, const char *signal,
+	       			       	       const char *member, Qt::ConnectionType = Qt::AutoConnection) const;
+
+        //  these is some general member functions,but in other case,the QObject class declared some
+	    function templates.
+
+	!!   QWidget is derived from QObject.
+	//  class QMetaMethod is declared in header <QtCore/QMetaObject>
+	//  member method clicked() is declared in class QAbstractButton which in the header <QtWidgets/QAbstractButton>
+	//  the slot quit() is declared in class QCoreApplication which in the header <QtCore/QCoreApplication>
+	//  macro function SIGNAL() and SLOT() are declared in <QtCore/qobjectdefs.h>
+	
