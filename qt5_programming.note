@@ -303,4 +303,44 @@ Chapter 3 : Working with Signals and Slots
 	//  member method clicked() is declared in class QAbstractButton which in the header <QtWidgets/QAbstractButton>
 	//  the slot quit() is declared in class QCoreApplication which in the header <QtCore/QCoreApplication>
 	//  macro function SIGNAL() and SLOT() are declared in <QtCore/qobjectdefs.h>
+
+      <QtWidgets/QDial>
+        QDial widget is a knob-like looking widget that is graduated with a minium and maximnum range of  numbers.
+        With the aid of a mouse,the knob can be turned,just like the volume on a speaker or radio.
+
+        class QDial is derived from class QAbstractSlider in public.
 	
+      For to connect several slots to a signal by call QObject::connect method.
+      When such signal was delivered,every slot was connected by QObject::connect would be executed.      
+      //
+        connect(A, SA, B, SLOTB)
+	connect(A, SA, C, SLOTC)
+	...
+
+      #  generally,the signals of a widget class is declared in its class declaring under label 'Q_SIGNALS'.
+      	 and the slots are supported is declared under label 'public Q_SLOTS'.
+
+      <QtWidgets/QLCDNumber>
+        QLCDNumber widget is a lcd-screen-like looking widget that display number information on the screen.
+	this class is derived from class QFrame in public.
+	and it supports these display mode : Hex, Dec, Oct, Bin
+	supports segment style : Outline, Filled, Flat
+
+      Of course,there could has single slot,multiple signals.
+      For connect several signals to one slot,have to call QObject::connect method by repeat.
+      but in this case,the fourth parameter of connect() is always same slot,and the third parameter of connect()
+      is always same widget object.
+      //  
+        connect(A, SA, B, SLOTB)
+	connect(C, SC, B, SLOTB)
+
+      <QtWidgets/QSlider>
+        QSlider is a slider widget.
+	class QSlider is derived from class QAbstractSlider in public.
+	QSlider allows to set ticks position,it supports :
+	  NoTicks =0 , TicksAbove = 1, TicksLeft = TicksAbove, TicksBelow = 2, TicksRight = TicksBelow, TicksBothSides = 3
+
+	but this class only allows to set orientation during construting.
+	member method void setTickInterval(int ti); can set ticks interval.
+	derived member method int singleStep() const; can set spaning for one step on ticks.
+	  
