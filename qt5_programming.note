@@ -343,4 +343,55 @@ Chapter 3 : Working with Signals and Slots
 	but this class only allows to set orientation during construting.
 	member method void setTickInterval(int ti); can set ticks interval.
 	derived member method int singleStep() const; can set spaning for one step on ticks.
-	  
+
+
+Chapter 4 : Implementing Windows and 4 Dialog
+    Creating a custom window :
+      for create a custom window,can make a new subclass it is derived from other QT class,so the new subclass
+      for custom window should derived from QMainWindow.(QMainWindow is public inherit QWidget)
+
+      Have to pay attention when try to define the subclass,the macro keyword Q_OBJECT should be contained in it.
+      C++ does not know how to make connection between QT signal and QT slot,this macro could let signal-slot
+      mechanism become a part of C++ syntax.(in another certain words,that is QT C++ syntax)
+
+      the subclass define should like this following :
+        class Subclass : public QMainWindow {
+	
+	  Q_OBJECT
+	  public:
+	    Subclass() { ... }
+	    ...
+	};
+
+      <QtWidgets/QMainWindow>
+      class QMainWindow : public QWidget;
+        QMainWindow is used to create a Qt main window which is like to a editor window.
+	  [  Menu Bar  ]
+	    [  Toolbars  ]
+	      [  Dock widgets  ]
+	        [  Central widget  ]
+		  ...
+          [  Status Bar  ]
+
+	Menu Bar : the top widget,such as the file,edit,and help menus go there.
+	Toolbars : some tools go there.
+	Dock widgets : some collapsible panels go there.
+	Central widget : the main controls within the window must put in the Central Widget location,
+		         could create a parent window put it in Central Widget location,and let some
+			 functional child widgets in it.
+			 the widget is Central widget would be the only widget to be displayed in 
+			 QMainWindow.
+	Status Bar : record somethings for current window.
+
+	Methods :
+	  void setCentralWidget(QWidget *widget);
+	    this method lets the widget pointer widget points to becomes the central widget of current
+	    QMainWindow object.
+
+	  void resize(int w, int h);
+	  void resize(const QSize &);
+	    method resize is derived from base class QWidget.it resize window to to such window that
+	    width == w and height == h (unit - pixel).
+	    the overload would resize window to new size indicated by a QSize parameter.
+	    
+      
