@@ -393,5 +393,71 @@ Chapter 4 : Implementing Windows and 4 Dialog
 	    method resize is derived from base class QWidget.it resize window to to such window that
 	    width == w and height == h (unit - pixel).
 	    the overload would resize window to new size indicated by a QSize parameter.
+
+    Menu bar :
+      in Qt,menu bars occupy the very top of the window,for creat menu have to use class QMenu.
+      for add some items in to a menu,have to use class QAction.of course,class QMenuBar is necessary.
+
+      class QMainWindow has a member method named menuBar() :
+        QMenuBar *QMainWindow::menuBar() const;
+	  this method create a menubar at the top of main window.
+	  a main window just has one menubar,but the menubar could has several submenu.
+
+      <QtWidgets/QMenuBar>
+        class QMenuBar : public QWidget;
+	  this class is a menu bar.a main window can only has one menu bar.
+
+	Methods :
+	  QAction *addMenu(QMenu *menu);
+	  QMenu *addMenu(const QString &title);
+	  QMenu *addMenu(const QIcon &icon, const QString &title);
+	    addMenu() adds a menu to menu bar.there has several overload version.
+	    QIcon is a class used to as an icon for menu or button.
+
+      <QtWidgets/QMenu>
+      class QMenu : public QWidget;
+        this class is the meun in the menubar.
+
+        Methods :
+	  template<typename Functor>
+	  QAction *addAction(const QIcon &icon, const QString &text, Functor functor, const QKeySequence &shortcut = 0);
+	    addAction() takes four arguments.
+	    @icon would be the new icon for the action in current meun.
+	    @text would be describe text for the action.
+	    @functor would be the object to invoke class featrues,generally is this pointer.
+	    @shortcut is the shortcut for the action.QAction has member method setShortcut() to set shortcut after.
+
+	  QAction *addSeparator();
+	    add a separator into menu.
+
+      <QtWidgets/QAction>
+      class QAction : public QObject;
+        this class is the action in the menu at its item.
+
+	Methods :
+	  void setShortcut(const QKeySequence &shortcut);
+	    this method set shortcut for current QAction with QKeySequence.
+	    the key compose is indicated by QKeySequence class.
+
+	  void setShortcuts(QkeySequence::StandardKey);
+	    this method is used to set StandardKey in Qt.
+
+      so the relationship between these class is :
+        (QMainWindow (QMenuBar
+			(QMenu
+			  QAction
+			  QAction
+			  ...)
+			(QMenu
+			  QAction
+			  ...)
+			...)
+	             (QToolBar) ... )
+
+      function QObject::connect() could connect singal and slot between QAction and QMainWindow.
+      if some action is required by user,main window should respond as well.
+
+	  
+	  
 	    
       
