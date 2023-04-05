@@ -403,6 +403,16 @@ Chapter 4 : Implementing Windows and 4 Dialog
 	  this method create a menubar at the top of main window.
 	  a main window just has one menubar,but the menubar could has several submenu.
 
+      class QMainWindow has a member method named addToolBar() :
+        void addToolBar(Qt::ToolBarArea area, QToolBar *toolbar);
+	void addToolBar(QToolBar *toolbar);
+	QToolBar *addToolBar(const QString &title);
+	  the functions func1 and func2 need an existed QToolBar object and place it in window.
+	  the last function func3 needs a title text object and then create a QToolBar object
+	  then return it.
+	  in fact,func3 calls the first constructor of QToolBar class to create such object.
+	  a main window could has one more tool bar in it.
+
       <QtWidgets/QMenuBar>
         class QMenuBar : public QWidget;
 	  this class is a menu bar.a main window can only has one menu bar.
@@ -456,6 +466,36 @@ Chapter 4 : Implementing Windows and 4 Dialog
 
       function QObject::connect() could connect singal and slot between QAction and QMainWindow.
       if some action is required by user,main window should respond as well.
+
+
+    Tool bar :
+      tool bar contains a set of controls that could be widgets or instance of QAction.
+      this also means that may choose to replace the QAction with a widget,such as a regular QPushButton
+      or QComboBox.
+      generally,tool bar is beneath the menu bar,but there is could move it around the window.
+
+      <QtWidgets/QToolBar>
+      class QToolBar : public QWidget;
+        this class is tool bar for Qt Application.
+
+	Methods :
+	  explicit QToolBar(const QString &title, QWidget *parent = nullptr);
+	  explicit QToolBar(QWidget *parent = nullptr);
+	    the constructors of QToolBar.
+
+	  void setMoveable(bool movable);
+	  bool isMovable() const;
+	    setMoveable() is a toggler for controls whether the tool bar is movable.
+	    isMovable() check the tool bar is movable or is not.
+
+	  using QWidget::addAction;
+	  QAction addAction(const QIcon &icon, const QString &text);
+	    addAction() method is used to add QAction into the tool bar,and also there is some
+	    overload version represented.
+	    for this function,@icon is the image would shown on the button,and @text is the tooltip.
+	    function returns a QAction object,and it can be used to make connection between signal
+	    and slot via connect().
+	    
 
 	  
 	  
