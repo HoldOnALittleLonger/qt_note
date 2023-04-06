@@ -89,6 +89,8 @@ Chapter 2 : Creating Widgets and Layouts
 	QStackedLayout class provides a stack of widgets where only one widget is visible at a time.
 	QVBoxLayout class lines up widgets vertically.
 	QHBoxLayout class lines up widgets horizontally.
+
+	//  Layout could contains another Layout.
 	
 	Reasons for need layout :
 	  1>  to allow us to display more than one widget.
@@ -136,6 +138,11 @@ Chapter 2 : Creating Widgets and Layouts
 	    //    Normal, NoEcho, Password, PasswordEchoOnEdit
 	    //  via invoke void setEchoMode(EchoMode);
 	    //  via invoke void setPlaceholderText(const QString &); could place hint text on line.
+
+	    QString text() const;
+	      this method returns the string received by QLineEdit object.
+	    void setText(const QString &);
+	      this method set current text in QLineEdit to the QString refers to.  
 
 	  Class QSpinBox : <QtWidgets/QSpinBox>
 	    this class provides spin box that is the qt widget,user can use mouse to select a number
@@ -240,6 +247,9 @@ Chapter 2 : Creating Widgets and Layouts
 	Functions and Type :
 	  class QHBoxLayout : public QBoxLayout;  <QtWidgets/QHBoxLayout>
 	    it hasnt internal methods exclude constructor and destructor.all methods inherited from QBoxLayout.
+
+	  void addStretch(int stretch = 0);  //  inherited from QBoxLayout class.
+	    add stretch to current QHBoxLayout object.stretch was filled by empty space.
 
 
 Chapter 3 : Working with Signals and Slots
@@ -495,6 +505,130 @@ Chapter 4 : Implementing Windows and 4 Dialog
 	    for this function,@icon is the image would shown on the button,and @text is the tooltip.
 	    function returns a QAction object,and it can be used to make connection between signal
 	    and slot via connect().
+
+    Adding other widgets : 
+      qt main window can only has one central widget,for to add central widget,have to call method
+      void setCentralWidget(QWidget *widget);
+      there is could place another qt widgets in the central widget to customize it.
+      QGridLayout, QVBoxLayout, QHVBoxLayout, QMessageBox ...etc
+
+      <QtWidgets/QTableView>
+      class QTableView : public QAbstractItemView;
+        this class use columns and rows to display data or information in cells.
+	like this style :
+	  [P00 P01 P02 ...]
+	  [P10 P11 P12 ...]
+	  ...
+	table view style can has a model to introduce how display cell.
+	  
+	Methods :
+	  void setModel(QAbstractItemModel *model) override;
+	    set model for current table view object.
+
+	  void setContextMenuPolicy(Qt::ContextMenuPolicy policy);  //  inherited from QWidget
+	    set context menu policy for current table view object.
+
+	  QHeaderView *horizontalHeader() const;
+	  QHeaderView *verticalHeader() const;
+	    these methods return pointers point to horizontal header or vertical header.
+	    QHeaderView used to controls table' header style.
+
+      //  Qt has QTableView class and QListView class and QTreeView class.
+      	  QListView class in header <QtWidgets/QListView>,it used to display information alike of list style.
+	  E.g.
+	    [...]
+	    [...]
+	    [...]
+
+	  QTreeView class in header <QtWidgets/QTreeView>,it used to display information alike of directory tree style.
+	  (for hierarchical information)
+	  E.g.
+	    [...]
+	      [...]
+	        [...]
+            [...]
+	    ...
+
+      <QtGui/QStandardItemModel>
+      class QStandardItem;
+      class QStandardItemModel : public QAbstractItemModel;
+        QStandardItemModel is a class used to define compound format for items.
+	QStandardItem is the item in QStandardItemModel.
+
+	QStandardItemModel Methods :
+	  QStandardItemModel(int rows, int columns, QObject *parent = nullptr);
+	  explicit QStandardItemModel(QObject *parent = nullptr);
+	    constructors.if give @rows and @columns,then the model produces a [@row, @columns] matrix
+	    as its style.
+
+	  QStandardItem *horizontalHeaderItem(int column) const;  
+	  void setHorizontalHeaderItem(int column, QStandardItem *item);
+	  QStandardItem *verticalHeaderItem(int row) const;
+	  void setVerticalHeaderItem(int row, QStandardItem *item);
+	    these functions is used to get or set header item.
+	    one model just has one header,like table view.
+
+	  QStandardItem *item(int row, int column = 0) const;
+	  void setItem(int row, int column, QStandardItem *item);
+	  inline void setItem(int row, QStandardItem *item);
+	    these functions are used to insert item into model or get item from model.
+	    header item must use header functions.
+
+	QStandardItem Methods :
+	  QStandardItem();
+	  explicit QStandardItem(const QString &text);
+	  QstandardItem(const QIcon &icon, const QString &text);
+	  explicit QStandardItem(int rows, int columns = 1);
+	    constructors,generally,the context of QStandardItem object is QString text.
+
+	  inline QString text() const;
+	    returns the current context in QStandardItem.
+
+	  inline void setText(const QString &);
+	    set the current context in QStandardItem to QString reference refers to.
+
+      <QtCore/QDate>
+      <QtWidgets/QDateEdit>
+      class QDateEdit : public QDateTimeEdit;
+      class QDate;
+        class QDate is a class used to save time style in Qt.
+	class QDateEdit is a widget used to offer a interaction mechism between user and QDate on GUI.
+
+	QDate Methods :
+	  QDate();
+	  QDate(int y, int m, int d);
+	  QDate(int y, int m, int d, QCalender cal);
+	    constructors used to construct QDate object.
+
+	  int year() const;
+	  int year(QCalender cal) const;
+	  int month() const;
+	  int month(QCalender cal) const;
+	  int day() const;
+	  int day(QCalender cal) const;
+	  bool setDate(int year, int month, int day);
+	  bool setDate(int year, int month, int day, QCalender cal);
+	    these functions are used to get or set year,month,day.
+
+	  static QDate currentDate();
+	    returns a QDate object initialized by current system time.
+
+	  QString toString(Qt::DateFormat format = Qt::TextDate) const;
+	    convert current time data in QDate to a QString object and return it.
+
+	QDateEdit Methods :
+	  explicit QDateEdit(QWidget *parent = nullptr);
+	  explicit QDateEdit(const QDate &date, QWidget *parent = nullptr);
+	    constructors of QDateEdit.
+
+	  QDate date() const;
+	    returns QDate object initialized by current date received by QDateEdit object.
+
+	  //  all features of QDateEdit are inherited from QDateTimeEdit.
+
+	  
+
+      
 	    
 
 	  
