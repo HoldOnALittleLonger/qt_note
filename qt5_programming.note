@@ -626,6 +626,110 @@ Chapter 4 : Implementing Windows and 4 Dialog
 
 	  //  all features of QDateEdit are inherited from QDateTimeEdit.
 
+    Adding dialog boxes :
+      QMessageBox provides us with the functionality to raise alerts and receive input using QInputDialog.
+      Message type :
+        Question :
+	  For asking a question during normal operations.
+	Information :
+	  For reporting information about normal operations.
+	Warning :
+	  For reporting non-critical erros.
+	Critical :
+	  For reporting critical errors.
+
+      The icon and number of buttons on a QMessageBox instance is configurable.
+
+      <QtWidgets/QMessageBox>
+      class QMessageBox : public QDialog;
+        Qt message box class.
+
+      Methods :
+        explicit QMessageBox(QWidget *parent = nullptr);
+	QMessageBox(Icon icon, const QString &title, const QString &text,
+		    StandardButtons buttons = NoButton, QWidget *parent = nullptr,
+		    Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
+
+	  constructors of QMessageBox.
+	  @buttons is the type of StandardButtons which is type of enumerator defined in QMessageBox.
+	  there has some familiar buttons :
+	    QMessageBox::Ok
+	    QMessageBox::No
+	    QMessageBox::NoButton  //  NoButton means no button produre
+	    QMessageBox::Close
+	    QMessageBox::Cancel
+	    QMessageBox::Default   //  Default means the button is default button
+
+	    //  tip text of button is the name of button.
+
+	static int information(QWidget *parent, const QString &title, const QString &text,
+	       	   	       int button0, int button1 = 0, int button2 = 0);
+        static int information(QWidget *parent, const QString &title, const QString &text,
+                               const QString &button0Text,
+			       const QString &button1Text = QString(),
+			       const QString &button2Text = QString(),
+			       int defaultButtonNumber = 0,
+			       int escapeButtonBumber = -1);
+          information() method produce a inform message box.it could has three buttons in box.
+	  if use the second overload version,then the tip text of button would be set as QString
+	  object,pass null QString object would prevent produce the button.
+
+        static StandardButton question(QWidget *parent, const QString &title, const QString &text,
+	       		      	       StandardButtons buttons = StandardButtons(Yes | No),
+				       StandardButton defaultButton = NoButton);
+        static int question(QWidget *parent, const QString &title, const QString &text,
+	       	            int button0, int button1 = 0, int button2 = 0);
+        static int question(QWidget *parent, const QString &title, const QString &text,
+	       	            QString &button0Text,
+			    QString &button1Text = QString(),
+			    QString &button2Text = QString(),
+			    int defaultButtonNumber = 0,
+			    int escapeButtonBumber = -1);
+          question() method is used to raise a dialog to ask the user a question.it has two main buttons Yes and No,
+	  and one alternative button(button2).
+	  if user clicked @button0,returns 0,returns 1 when user clicked @button1,returns 2 when user clicked @button2.
+
+	static void about(QWidget *parent, const QString &title, const QString &text);
+	  about() method produces a about message box which has one button(Ok),and the message box has context @text.
+
+	//  more in header.
+
+      <QtWidgets/QInputDialog>
+      class QInputDialog : public QDialog;
+        the class is used to raise alerts to user and receive input from user.
+
+      Methods :
+        QInputDialog(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+	  constructor of QInputDialog.
+
+	void setInputMode(InputMode mode);
+	  set input mode one of TextInput,IntInput,DoubleInput.
+
+	InputMode inputMode() const;
+	  returns current input mode.
+
+	void setLabelText(const QString &text);
+	QString labelText() const;
+	  set or get label text.
+
+	void setOption(InputDialogOption option, bool on = true);
+	bool testOption(InputDialogOption option) const;
+	void setOptions(InputDialogOptions options);
+	InputDialogOptions options() const;
+	  set or test or get InputDialogOption for current object.
+	  InputDialogOption is type of enumerator has value NoButtons,UseListViewForComboBoxItems,UsePlainTextEditForTextInput.
+
+        static int getInt(QWidget *parent, const QString &title, const QString &label, int value = 0,
+	       	          int minValue = -2147483647, int maxValue = 2147483647,
+			  int step = 1, bool *ok = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+          getInt() would produce a combo box,it has one button Ok.
+	  @value is the default value,
+	  scope is [@minValue, @maxValue],
+	  @step introduces increament for one step,
+	  if user clicked Ok,then @ok would be set to true.
+	  method returns the value user selected when clicke Ok.
+
+
 	  
 
       
