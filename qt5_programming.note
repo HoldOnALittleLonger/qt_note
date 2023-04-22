@@ -589,10 +589,13 @@ Chapter 4 : Implementing Windows and 4 Dialog
 
       <QtCore/QDate>
       <QtWidgets/QDateEdit>
+      <QtCore/QDateTime>
       class QDateEdit : public QDateTimeEdit;
       class QDate;
+      class QDateTime;
         class QDate is a class used to save time style in Qt.
 	class QDateEdit is a widget used to offer a interaction mechism between user and QDate on GUI.
+	class QDateTime is similar to QDate,but it is not only contains date,just contains time as well.
 
 	QDate Methods :
 	  QDate();
@@ -625,6 +628,17 @@ Chapter 4 : Implementing Windows and 4 Dialog
 	    returns QDate object initialized by current date received by QDateEdit object.
 
 	  //  all features of QDateEdit are inherited from QDateTimeEdit.
+	QDateTime Methods :
+	  QDateTime() noexcept(Data::CanBeSmall);
+	  QDateTime(const QDate &, const QTime &, Qt::TimeSpec spec = Qt::LocalTime);
+	  QDateTime(const QDate &, const QTime &, Qt::TimeSpec spec, int offsetSeconds);
+	  QDateTime(const QDate &, const QTime &, const QTimeZone &timeZone);
+	    constructors
+
+	  static QDateTime currentDateTime();
+	  static QDateTime currentDatetimeUtc();
+	    returns current date and time with local time zone or UTC date time.
+	  
 
     Adding dialog boxes :
       QMessageBox provides us with the functionality to raise alerts and receive input using QInputDialog.
@@ -728,6 +742,54 @@ Chapter 4 : Implementing Windows and 4 Dialog
 	  @step introduces increament for one step,
 	  if user clicked Ok,then @ok would be set to true.
 	  method returns the value user selected when clicke Ok.
+
+
+Chapter 5 : Managing Events,Custom Signals,and Slots
+    Event is the message passing around from the windowing system to the application.
+    In Qt,all events that occur are encapsulated in objects that inherit from the QEvent abstract class.
+    change in the state of application will be noticed,and a QEvent object would be created and represent it.
+    the QEvent object will be delivered to the objects that inherit from QObject by Application event loop.
+    Qt event could be handled that alike of Linux signal.
+
+    Qt Event have different types were represented.
+
+    Event handlers :
+      QObject has the method event(),which receives events.
+      subclass can redefines event handler and reimplement it.(i.e. moveEvent(), timerEvent(), ... !protected member)
+
+      <QtGui/QWindow>
+        virtual void moveEvent(QMoveEvent *);
+      <QtWidgets/QWidget>
+        virtual void moveEvent(QMoveEvent *event);
+      move event handler named moveEvent and it is a virtual member method,so subclass could redefines it and 
+      reimplement it.
+
+      <QtCore/QObject>
+        virtual void timerEvent(QTimerEvent *event);
+      timer event handler.
+
+      for produce timer event have to use function QObject::startTimer() to start a timer,after timer expired,
+      the timer event would be passed to application.
+
+      <QtCore/QObject>
+        int QObject::startTimer(int interval, Qt::TimerType timerType = Qt::CoarseTimer);
+	int QObject::startTimer(std::chrono::milliseconds time, Qt::TimerType timerType = Qt::CoarseTimer);
+	  these methods will start a timer,time limit expired event would occurs after @interval seconds or 
+	  @time milliseconds.
+
+      move event will occurs when move application window.the event encapsulated in QEvent object contains some additional messages.
+        inline const QPoint & QMoveEvent::pos() const;
+      	inline const QPoint & QMoveEvent::oldPos() const;
+	  this member method is used to extract the QPoint object of current window.
+	  then call method x() or y() on the QPoint object for get coordinate of current window.
+	  oldPos() returns the older QPoint object reference.
+	  
+
+	
+	  
+      
+
+      
 
 
 	  
