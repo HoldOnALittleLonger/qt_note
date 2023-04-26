@@ -757,6 +757,7 @@ Chapter 5 : Managing Events,Custom Signals,and Slots
       QObject has the method event(),which receives events.
       subclass can redefines event handler and reimplement it.(i.e. moveEvent(), timerEvent(), ... !protected member)
 
+      <QtGui/QMoveEvent>
       <QtGui/QWindow>
         virtual void moveEvent(QMoveEvent *);
       <QtWidgets/QWidget>
@@ -784,7 +785,136 @@ Chapter 5 : Managing Events,Custom Signals,and Slots
 	  then call method x() or y() on the QPoint object for get coordinate of current window.
 	  oldPos() returns the older QPoint object reference.
 	  
+    Drag and drop : 
+      drag event is drag an item to GUI window.
+      how to responds to drag event can be customized via redefine drag event handlers.
 
+      <QtGui/QMoveEvent>
+      <QtGui/QMouseEvent>
+      <QtWidgets/QWidget>
+        virtual void dragEnterEvent(QDragEnterEvent *event);
+	virtual void dragLeaveEvent(QDragLeaveEvent *event);
+	virtual void dragMoveEvent(QDragMoveEvent *event);
+	virtual void dropEvent(QDropEvent *event);
+	void setAcceptDrops(bool on);
+	  QWidget class represented those drag event handlers,other classes inherited from QWidget also hold
+	  such handlers.
+	  user can easy to defined a new class derived from Qt Widget to customize drag event.
+	  the member function setAcceptDrops() of QWidget is used as a trigger for controls whether the widget should
+	  accept drops.
+	  
+	  inline void QEvent::acceptProposedAction();
+	    Qt widget use this method to inform Qt that widget have handled the proposed action event,such
+	    dragMoveEvent dragLeaveEvent dragEnterEvent.and these events are called when the cursor in drag mode
+	    is on the boundary of the widget that calls the setAcceptDrops().
+
+	  inline void QEvent::ignore();
+	  inline void QEvent::ignore(const QRect &r);
+	    in usually the event handler calls these member function(event handler inherited from QEvent),ignore() means
+	    ignore the event this once.
+
+      <QtWidgets/QTextEdit>
+        class QTextEdit : public QAbstractScrollArea;
+	  Qt text edit widget.this class is the foundation of Editor.
+	  
+	  methods :
+	    explicit QTextEdit(QWidget *parent = nullptr);
+	    explicit QTextEdit(const QString &text, QWidget *parent = nullptr);
+	    virtual ~QTextEdit();
+	      constructors and destructor,because the destructor is virtual,so this class can be inherited by user-defined
+	      class.
+
+	    void setText(const QString &text);
+	      set contents for QTextEdit widget object.
+
+      <QtCore/QMimeData>
+      <QtCore/QMimeDatabase>
+      <QtCore/QMimeType>
+        class QMimeData : public QObject;
+	  this class is used to descript qt mime data.qt event might carry such data.
+
+	  methods :
+	    QMimeData();
+	    ~QMimeData();
+	      constructor and destructor.
+
+	    QList<QUrl> urls() const;
+	    void setUrls(const QList<QUrl> &urls);
+	    bool hasUrls() const;
+	      retrive urls or set urls or check if mime data has urls.
+
+	    QString text() const;
+	    void setText(const QString &text);
+	    void hasText() const;
+	      retrive text or set text or check if mime data has text.
+
+	    //  more in header <QtCore/QMimeData>
+
+      <QtCore/QFile>
+        class QFile :public QFileDevice;
+	  this class is the file operation class in Qt alike of Linux file operations.
+
+	methods :
+	  QFile();
+	  QFile(const QString &name);
+	  explicit QFile(QObject *parent);
+	  QFile(const QString &name, QObject *parent);
+	  ~QFile();
+	    constructors and destructor.
+
+	  QString fileName() const;
+	  void setFileName(const QString &name);
+	    get or set file name.
+
+	  bool open(OpenMode flags) override;
+	  bool open(FILE *f, OpenMode ioFlags, FileHandleFlags handleFlags = DontCloseHandle());
+	  bool open(int fd, OpenMode ioFlags, FileHandlerFlags handleFlags = DontCloseHandle());
+	    open a file.the OpenMode is some enumerators all were enclosed by Qt and they are alike of 
+	    linux open flag.
+	    i.e QFile::ReadOnly, QFile::Text ...
+
+	  QByteArray readAll();  //  inherited from QFileDevice
+	    read all data from file and return them.
+
+      <QtCore/QTextStream>
+        class QTextStream;
+	  Qt text stream class.file is abstract to a text stream.
+
+	methods :
+	  QTextStream();
+	  explicit QTextStream(QIODevice *device);
+	  explicit QTextStream(FILE *fileHandle, QIODevice::OpenMode openMode = QIODevice::ReadWrite());
+	  explicit QTextStream(QString *string, QIODevice::OpenMode openMode = QIODevice::ReadWrite());
+	  explicit QTextStream(QByteArray *array, QIODevice::OpenMode openMode = QIODevice::ReadWrite());	    
+  	  explicit QTextStream(const QByteArray &array, QIODevice::OpenMode openMode = QIODevice::ReadOnly());
+	  virtual ~QTextStream();
+	    constructors and destructor.
+
+	  QString readLine(qint64 maxlen = 0);
+	  QString readLineInto(QString *line, qint64 maxlen = 0);
+	  QString readAll();
+	  QString read(qint64 maxlen = 0);
+	    read data from text stream.
+
+	  bool seek(qint64 pos);
+	    seek position in stream.
+
+	  void setDevice(QIODevice *device);
+	  QIODevice *device() const;
+	    set or get io device.
+	    i.e. stdin stdout stderr
+
+	  bool atEnd() const;
+	    if stream is end.
+
+	  //  this class had been overloaded << and >> operators to simulate std::cout and std::cin.
+
+	  
+
+
+
+      
+      
 	
 	  
       
