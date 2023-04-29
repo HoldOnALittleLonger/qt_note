@@ -36,7 +36,7 @@ Chapter 2 : Creating Widgets and Layouts
 			QAbstractScrollArea
 			  (QGraphicsView, QTextEdit)
 
-      #  class QWidget : <inherit method> QObject
+      #  class QWidget : public QObject
       #  class QLabel : public QFrame
       #  ...
 
@@ -376,6 +376,7 @@ Chapter 4 : Implementing Windows and 4 Dialog
       <QtWidgets/QMainWindow>
       class QMainWindow : public QWidget;
         QMainWindow is used to create a Qt main window which is like to a editor window.
+	attention: the destructor of QMainWindow is not a virtual method!
 	  [  Menu Bar  ]
 	    [  Toolbars  ]
 	      [  Dock widgets  ]
@@ -422,6 +423,7 @@ Chapter 4 : Implementing Windows and 4 Dialog
 	  then return it.
 	  in fact,func3 calls the first constructor of QToolBar class to create such object.
 	  a main window could has one more tool bar in it.
+	  QMainWindow will holds no tool bar until these member functions were called.
 
       <QtWidgets/QMenuBar>
         class QMenuBar : public QWidget;
@@ -505,6 +507,33 @@ Chapter 4 : Implementing Windows and 4 Dialog
 	    for this function,@icon is the image would shown on the button,and @text is the tooltip.
 	    function returns a QAction object,and it can be used to make connection between signal
 	    and slot via connect().
+
+    Status Bar :
+      one QMainWindow can only has one status bar.if a QMainWindow wants to get its status bar,have to
+      call member function "QStatusBar *statusBar() const;".
+
+      <QtWidgets/QStatusBar>
+      class QStatusBar : public QWidget;
+        this class is the Qt main window status bar.
+
+      methods :
+        explicit QStatusBar(QWidget *parent = nullptr);
+	virtual ~QStatusBar();
+	  constructor and destructor.
+
+	void addWidget(QWidget *widget, int stretch = 0);
+	int insertWidget(int index, QWidget *widget, int stretch = 0);
+	void removeWidget(QWidget *widget);
+	  methods for put on or remove from QStatusBar.
+
+	QString currentMessage(void) const;
+	  return a QString object that contains current message in status bar.
+
+	void showMessage(const QString &text, int timeout = 0);
+	void clearMessage();
+	  show message on status bar or clear message on status bar.
+	  these two functions as QStatusBar' slots.but QStatusBar object could free to call them
+	  because they are public.
 
     Adding other widgets : 
       qt main window can only has one central widget,for to add central widget,have to call method
@@ -878,7 +907,8 @@ Chapter 5 : Managing Events,Custom Signals,and Slots
 
       <QtCore/QTextStream>
         class QTextStream;
-	  Qt text stream class.file is abstract to a text stream.
+	  Qt text stream class.this class is used to operates some IODevice or Qt class simulate a
+	  text stream.
 
 	methods :
 	  QTextStream();
@@ -888,7 +918,7 @@ Chapter 5 : Managing Events,Custom Signals,and Slots
 	  explicit QTextStream(QByteArray *array, QIODevice::OpenMode openMode = QIODevice::ReadWrite());	    
   	  explicit QTextStream(const QByteArray &array, QIODevice::OpenMode openMode = QIODevice::ReadOnly());
 	  virtual ~QTextStream();
-	    constructors and destructor.
+	    constructors and destructor.construct from QIODevice or regular file etc.
 
 	  QString readLine(qint64 maxlen = 0);
 	  QString readLineInto(QString *line, qint64 maxlen = 0);
@@ -908,6 +938,55 @@ Chapter 5 : Managing Events,Custom Signals,and Slots
 	    if stream is end.
 
 	  //  this class had been overloaded << and >> operators to simulate std::cout and std::cin.
+
+
+    Custom signals :
+      for customize signal,have to use Q_OBJECT macro,and also,customize slot needs the macro,too.
+      signal function could receives zero or one argument,but no return.
+
+      example :
+        class MainWindow : public QMainWindow {
+	  Q_OBJECT
+
+	public slots:
+	  void the_slot(void);
+	  signal: void the_signal(void);
+	public:
+	  ...
+	protected:
+	  ... // some handlers
+	private:
+	  ... // internals
+	};
+
+	label "public slots" is used to spare a part to declares signals and slots.
+	'public' means is accessible from external space.
+
+	Qt keyword "emit" used to pass a signal.it is usually used in handlers.
+	e.g.
+	  void MainWindow::mousePressEvent(QMouseEvent *event)
+	  {
+	    emit the_signal();
+	  }
+
+	when the event mousePressEvent occurs,Qt will emit signal the_signal() to the Qt object
+	that is interesting in this signal.(use connect() to establish such relationship)
+	e.g.
+	  connect(this, SIGNAL(the_signal()), this, SLOT(the_slot()));
+	  //  the_signal() is produces by this and pass to this.
+
+	note :
+	  if signal received an argument,then it will send its parameter to the slot which linked with it.
+	  e.g.
+	    signal: void the_signal(QPoint);
+	    void the_slot(QPoint);
+	    connect(this, SIGNAL(the_signal(QPoint)), this, SLOT(the_slot(QPoint)));
+	    
+	    emit the_signal(QPoint(0));
+	    //  the temporary object QPoint would be copyed by the parameter of the_slot().
+
+	  signal function no function body,just signature its prototype as well.Qt use such method to
+	  sinature a Qt signal.
 
 	  
 
