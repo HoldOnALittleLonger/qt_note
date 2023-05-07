@@ -988,7 +988,73 @@ Chapter 5 : Managing Events,Custom Signals,and Slots
 	  signal function no function body,just signature its prototype as well.Qt use such method to
 	  sinature a Qt signal.
 
-	  
+
+Chapter 6 : Connecting Qt with Databases
+    QtSql :
+      the QtSql module comes equipped with classes and drivers for accessing databases.
+      QtSql is comprised of the following layers :
+
+        User interface level -
+	  QSqlQueryModel, QSqlTableModel, QSqlRelationalTableModel
+	SQL API level -
+	  QSqlDatabase, QSqlQuery, QSqlError, QSqlField, QSqlIndex, QSqlRecord
+	Driver level -
+	  QSqlDriver, QSqlDriverCreatorBase, QSqlDriverPlugin, QSqlResult
+
+      each level makes use of classes.
+
+    Making the connection :
+      Qt use the class QSqlDatabase as database entity abstraction.
+      A program can have a number of connections to the same database.
+
+      <QtSql/QtSql>
+      class QSqlDatabase;  //  in fact,its definition in <qsqldatabase.h>
+        database handle entity.qt use this class as the database entity abstraction.
+
+	methods :
+	  QSqlDatabase();
+	  QSqlDatabase(const QSqlDatabase &);
+	  ~QSqlDatabase();
+	    constructor,copy-constructor,destructor.
+	    this call cant be derived.
+
+	  static QSqlDatabase addDatabase(const QString &type, const QString &connectionName = QLatin1String(defaultConnection));
+    	  static QSqlDatabase addDatabase(QSqlDriver *driver, const QString &connectionName = QLatin1String(defaultConnection));
+	    addDatabase() used to add a new database for program.it returns a QSqlDatabase object.
+	    @type is a QString reference.in Qt5.15.8,valid value is "QSQLITE".
+	    @connectionName indicates what is the name of this connection.
+	    @driver is a pointer points to an object is type QSqlDriver.SQL API level is based Driver level.
+
+	  void setDatabaseName(const QString &name);
+	  void setUserName(const QString &name);
+	  void setPassword(const QString &password);
+	  void setHostName(const QString &host);
+	  void setPort(int p);
+	    these functions is used to set database entity informations.
+	    user name is the login user for database.
+	    host is the host name,it could be ip address or host name.
+	    port is the TCP port where SQL server is listening.(mysqld is listen at 3306)
+	    set database name is equal to "USE <DATABASE NAME>;",entity will use the database which has same name with @name.
+
+	  QString databaseName() const;
+	  QString userName() const;
+	  QString password() const;
+	  QString hostName() const;
+	  int port() const;
+	  QSqlDriver *driver() const;
+	    get database information from database entity.
+
+	  bool open();
+	  bool open(const QString &user, const QString &password);
+	  void close();
+	    open a connection or close a connection.
+
+	  bool isOpen() const;
+	  bool isOpenError() const;
+	    if connection opened or if open connection failed.
+
+	  QSqlError lastError() const;
+	    return the last error information.
 
 
 
