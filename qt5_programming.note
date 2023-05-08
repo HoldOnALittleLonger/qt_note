@@ -1056,6 +1056,169 @@ Chapter 6 : Connecting Qt with Databases
 	  QSqlError lastError() const;
 	    return the last error information.
 
+    Listing records :
+      for operates a qt database entity,have to use class QSqlQuery.
+
+      <QtSql/QSqlQuery>
+      class QSqlQuery;
+        qt database entity operator.
+
+	methods :
+	  explicit QSqlQuery(QSqlResult *r);
+	  explicit QSqlQuery(const QString &query = QString(), QSqlDatabase db = QSqlDatabase());
+	  explicit QSqlQuery(QSqlDatabase db);
+	  QSqlQuery(const QSqlQuery &other);
+	  QSqlQuery &operator=(const QSqlQuery &other);
+	  ~QSqlQuery();
+	    constructors and copy-constructor and copy-assignment and destructor.
+	    this class cant be derived.for operates a qt database entity,must init object
+	    with a QSqlDatabase object or QSqlResult pointer.
+
+	  QSqlRecord record() const;
+	    retrive record for current query,contains field information.
+
+	  QString lastQuery() const;
+	    retrive last query statement.
+
+	  bool exec(const QString &query);
+	  bool exec();
+	    execute a SQL statement.
+	    no parameter version of exec() is used to start operations sequence.
+
+	  bool prepare(const QString &query);
+	  void bindValue(const QString &placeholder, const QVariant &val, QSql::ParamType type = QSql::In);
+	  void bindValue(int pos, const QVariant &val, QSql::ParamType type = QSql::In);
+	  void addBindValue(const QVariant &val, QSql::ParamType type = QSql::In);
+	    prepare() is used to prepare a SQL statement.
+	    bindValue() is used to replace value to placeholder or pos,default placeholder is '?'.
+	    addBindValue() is used to replace value to default placeholder.
+	    after finished a SQL statement,have to call exec() to execute.
+
+	  bool isValid() const;
+	  bool isActive() const;
+	  bool isNull(int field) const;
+	  bool isNull(const QString &name) const;
+	  int numRowsAffected() const;
+	  bool isSelect() const;
+	  int size() const;
+	    state checking.
+
+	  bool seek(int i, bool relative = false);
+	  bool next();
+	  bool previous();
+	  bool first();
+	  bool last();
+	    position control for records.
+	    next means go next row.
+	    previous means go previous row.
+	    first go the first row.
+	    last go the last row.
+
+	  QVariant value(int i) const;
+	  QVariant value(const QString &name) const;
+	    retrive data via index or field name.
+
+	  void finish();
+	    instruct the database driver that no more data will be fetched from this query until it is
+	    re-executed.
+
+	  void clear();
+	    clears the result set and release any resources held by the query,sets the query state to inactive.
+
+	  bool nextResult();
+	    discards the current result set and navigates to the next if available.
+
+      <QtSql/QSqlRecord>
+      class QSqlRecord;
+        this class is sued to encapsulate the functionality and characteristics of a database record,
+	the record is usually a row in a table or view within the database.
+
+	methods :
+	  QSqlRecord();
+	  QSqlRecord(const QSqlRecord &other);
+	  QSqlRecord &operator=(const QSqlRecord &other);
+	  ~QSqlRecord();
+	    constructor and destructor and copy-constructor,copy-assignment.
+	    this class cant be derived.
+
+	  int indexOf(const QString &name) const;
+	  QString fieldName(int i)const;
+	    retrive index via field name or retrive fiel name via index.
+
+	  QVariant value(int i) const;
+	  QVariant value(const QString &name) const;
+	  void setValue(int i, const QVariant &val);
+	  void setValue(const QString &name, const QVariant &val);
+	    get value or set value for field.
+
+	  QSqlField field(int i) const;
+	  QSqlField field(const QString &name) const;
+	    retrive field entity.
+
+	  void append(const QSqlField &field);
+	  void replace(int pos, const QSqlField &field);
+	  void insert(int pos, const QSqlField &field);
+	  void remove(int pos);
+	    field operating primitive.
+
+      for list records,have to use SQL command SELECT.
+      e.g.
+        SELECT * FROM TABLE1;
+
+	Qt form :
+	  QSqlQuery select_statement("SELECT * FROM TABLE1);
+	  QSqlRecord the_record(select_statement.record());
+
+	  do {
+	    qDebug() << select_statement.value(the_record.indexOf("field1")).toString();
+	    qDebug() << select_statement.value(the_record.indexOf("field2")).toString();
+	    qDebug() << select_statement.value(the_record.indexOf("field3")).toString();
+	    ...
+	    qDebug() << select_statement.value(the_record.indexOf("fieldN")).toString();
+	  } while (!select_statement.next());
+
+    The INSERT operation :
+      use SQL command INSERT to insert record.
+      e.g.
+        INSERT INTO TABLE1 (field1, field2, ... , fieldN) VALUES (value1, value2, ... , valueN);
+
+	Qt form :
+	  QSqlQuery insert_statement(db_name);
+	  insert_statement.prepare("INSERT INTO TABLE1 (field1, field2) VALUES (?, ?, ?)");
+	  insert_statement.addBindValue("value1");
+	  insert_statement.addBindValue("value2");
+	  insert_statement.exec();
+
+	  OR
+
+	  insert_statement.exec("INSERT INTO TABLE1 (field1, field2) VALUES (value1, value2)");
+
+    The DELETE operation :
+      use SQL command DELETE to insert record.
+      e.g.
+        DELETE FROM TABLE1 WHERE field = value;
+
+	Qt form :
+	  as same as INSERT operation.
+
+    The UPDATE operation :
+      use SQL command UPDATE to update record.
+      e.g.
+        UPDATE TABLE1 SET field1 = new_value1, field2 = new_value2, ... , WHERE field = target;
+
+	Qt form :
+	  as same as INSERT operation.
+
+    Note :
+      if field name or value is a string,have to use '' to include name or value.
+      Qt send SQL statement to database has same form with QString &query.
+      that is,
+        if query is "INSERT INTO TABLE1 ('last name') VALUES ('july esi')",then
+	the database interface will received "INSERT INTO TABLE1 ('last name') VALUES ('july esi')".
+	an error would occurs if use last name to replace 'last name'.
+
+
+
 
 
       
