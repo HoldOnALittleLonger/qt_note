@@ -541,6 +541,26 @@ Chapter 4 : Implementing Windows and 4 Dialog
       there is could place another qt widgets in the central widget to customize it.
       QGridLayout, QVBoxLayout, QHVBoxLayout, QMessageBox ...etc
 
+      <QtWidgets/QHeaderView>
+        class QHeaderView : public QAbstractItemView;
+	  this class provides a header row or header column for item views.
+
+	methods :
+	  explicit QHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
+	  virtual ~QHeaderView();
+	    constructor or destructor.
+
+	  void setModel(QAbstractItemModel *model) override;
+	    set model for header view.
+	    
+	  void setSectionsMovable(bool movable);
+	  bool sectionsMovable() const;
+	    if sections in header row is movable.
+
+	  void setStretchLastSection(bool stretch);
+	    set the las section in header view is stretch.if it is,then the Empty space in the
+	    right side will be filled.
+
       <QtWidgets/QTableView>
       class QTableView : public QAbstractItemView;
         this class use columns and rows to display data or information in cells.
@@ -555,7 +575,20 @@ Chapter 4 : Implementing Windows and 4 Dialog
 	    set model for current table view object.
 
 	  void setContextMenuPolicy(Qt::ContextMenuPolicy policy);  //  inherited from QWidget
-	    set context menu policy for current table view object.
+	    how the widget shows a context menu.
+	    default value of this property is Qt::DefaultContextMenu,which means the contextMenuEvent()
+	    handler is called.
+	    other values are Qt::NoContextMenu,Qt::PreventContextMenu,Qt::ActionsContextMenu,and 
+	    Qt::CustomContextMenu.
+	    with Qt::CustomContextMenu,the signal customContextMenuRequested() is emitted.
+
+
+	  void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
+	  void setSelectionModel(QItemSelectionModel *selectionModel) override;
+	  void setSelectionBehavior(QAbstractItemView::SelectionBehavior behavior);
+	    settings for selection in table view.
+	    @selectionModel : QAbstractItemView:: { Multi / Single / Extended / Contiguous }Selection /	NoSelection .
+	    @behavior : QAbstractItemView:: SelectRows / SelectItems / SelectColumns .
 
 	  QHeaderView *horizontalHeader() const;
 	  QHeaderView *verticalHeader() const;
@@ -1130,7 +1163,7 @@ Chapter 6 : Connecting Qt with Databases
 
       <QtSql/QSqlRecord>
       class QSqlRecord;
-        this class is sued to encapsulate the functionality and characteristics of a database record,
+        this class is used to encapsulate the functionality and characteristics of a database record,
 	the record is usually a row in a table or view within the database.
 
 	methods :
@@ -1216,6 +1249,91 @@ Chapter 6 : Connecting Qt with Databases
         if query is "INSERT INTO TABLE1 ('last name') VALUES ('july esi')",then
 	the database interface will received "INSERT INTO TABLE1 ('last name') VALUES ('july esi')".
 	an error would occurs if use last name to replace 'last name'.
+
+    Using a data model for database access :
+      Qt class for database model :
+        QSqlTableModel  //  read and write accessing
+	QSqlQueryMOdel  //  read-only accessing
+
+      MVC Model-View-Controller :
+        approach for how to present data and to maintain a relationship between data and presentation(View).
+	it recognizes that one critical piece of software is data,it abstracts the data into what is called a
+	model.
+	a model is basically a representation of the data in a software.(list of strings,folders and files under a parent folder,etc.)
+	in Qt,there are a number of widgets that can be used to display data in a model.
+
+	a change to model will automatically updated in view.
+
+      <QtSql/QtSql>
+      class QSqlTableModel : public QSqlQueryModel;
+        this class is the table model in Qt SQL.it has more functionality than class QSqlQuery or same kind classes.
+	Qt use it to establish mapping with SQL table.
+
+	methods :
+	  explicit QSqlTableModel(QObject *parent = nullptr, QSqlDatabase db = QSqlDatabase());
+	  virtual ~QSqlTableModel();
+	    constructor and destructor.
+
+	  virtual void setTable(const QString *tableName);
+	  QString tableName() const;
+	    set table for model or retrive name of current table the model on.
+
+	  QSqlRecord record() const;
+	  QSqlRecord record(int row) const;
+	    retrive record from current position or a special position in table.
+
+	  QVariant data(const QModelIndex &idx, int role = Qt::DisplayRole) const override;
+	  bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+	    retrive data or set data.
+
+	  int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	    return rows counter.
+
+	  virtual bool select();  //  public Q_SLOTS
+	    do SELECT.
+
+	  bool submitAll() override;  //  public Q_SLOTS
+	    submit all operations to database;
+
+	  bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+	    insert @count rows to table model as position @row.all new rows has default status.
+
+	  virtual void setFilter(const QString &filter);
+	    set filter for table model.this method will set SQL condition statement for database operation.
+
+	  bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value,
+	       		     int role = Qt::EditRole) override;
+	    set header data for model header.header data is used for header view as usual.
+	    this function is inherited from base class.
+	  
+	  virtual void setEditStrategy(EditStrategy strategy);
+	  EditStrategy editStrategy() const;
+	    set or tge strategy for the model.
+	    @strategy : OnFieldChange, OnRowChange, OnManualSubmit .
+
+    Displaying the model :
+      for display database model,could use QTableView widget.
+      it is a table style widget,call setModel() is easy to replace the default model with
+      QSqlTableModel object.
+      QSqlTableModel is allows to edit table view on GUI,and reflect changes on database,
+      so QTableView is suit this model.
+
+      steps :
+        create QSqlTableModel object
+	set somethings for the object
+	create QTableView object
+	set something for the object
+
+	//  if it is necessary.
+	//  for example,want to has a push button to respond
+	//  action,QVBoxLayout or QHBoxLayout.
+	create a layout and a main widget
+	add QTableView to layout
+	set layout for main widget
+	call show() on main widget object
+
+	//  if it is necessary.
+      
 
 
 
