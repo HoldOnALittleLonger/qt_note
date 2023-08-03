@@ -1,0 +1,179 @@
+Qt6 has different features with Qt5
+
+The Main Window Classes :
+  Qt provides these classes for managing main windows and associated user interface components :
+    QMainWindow is the central class around which applications can be built.along with
+    the companion QDockWidget and QToolBar classes,it represents the top-level user interface
+    of the application.
+
+    QDockWidget provides a widget that can be used to create detachable tool palettes or helper
+    windows.Dock widgets keep track of their own properties,and they can be moved,closed,and 
+    floated as external windows.
+
+    QToolBar provides a generic toolbar widget that can hold a number of different action-related
+    widgets,such as buttons,drop-down menus,comboboxes,and spin boxes.The emphasis on a unified
+    action model in Qt means that toolbars cooperate well with menus and keyboard shortcuts.
+
+  The generic method to use QMainWindow is create a subclass inherits from QMainWindow.
+
+Primary and Secondary Windows :
+  A widget that is not embedded in a parent widget is called a window.In Qt,QMainWindow and the
+  various subclasses of QDialog are the most common window types.
+
+  Primary window :
+    A widget it has no parent widget becomes the Primary window.
+
+  Secondary window :
+    A widget it has a parent widget but its flag is Qt::Window can become a window,this is
+    secondary window.
+
+Dialog Windows :
+  Dialog Windows are used as secondary windows that present the user with options and choices.
+  Dialogs are created by subclassing QDialog and using widgets and layouts to implement the
+  user interface.
+  Qt provides a number of ready-made standard dialogs that can be used for standard tasks like
+  file or font selection.
+
+X11 Preculiarities :
+  On X11,a window does not have a frame until the window manager decorates it.This happens
+  asynchronously at some point in time after calling QWidget::show() and the first paint
+  event the window receives,or it does not happen at all.
+  X11 is policy-free,ohters call it flexible.Thus you cannot make any safe assumption about
+  the decoration frame your window will get.
+  X11 provides no standard or easy way to get the frame geometry once the window is decorated,
+  Qt solves this problem with nifty heuristics and clever code that works on a wide range of
+  window managers that exist today.
+  For this reason,QWidget::frameGeometry() might returns wrong results.
+  X11 provides no way to maximize a window,QWidget::showMaximized() has to emulate the feature.
+
+QApplication class :
+  It inherits QGuiApplication class.
+  QApplication specializes QGuiApplication with some functionality needed for QWidget-based
+  applications.It handles widget specific initialization,finalization.
+  For any GUI application using Qt,there is precisely one QApplication object,for non-QWidget
+  based Qt applications,use QGuiApplication instead.
+  Some GUI applications provide a special batch mode ie.provide command line arguments for
+  executing tasks withoud manual intervention.
+  QCoreApplication often used for non-GUI mode.
+
+  The QApplication object is accessible through the instance() function that returns a pointer
+  equivalent to the global qApp pointer.
+  (qApp a global pointer referring to the unique application object,it only valid when the unique
+   application object is a QApplication)
+
+  It initializes the application with the user's desktop settings,and keeps track of these settings
+  in case the user changes the desktop globally.
+
+  It performs event handing,meaning that it receives events from the underlying window system and dispatches
+  them to the relevant widgets.
+
+  It parses common command line arguments and sets its internal state accordingly.
+
+  It defines the application's look and feel,which is encapsulated in QStyle object.This is can be changed
+  at runtime with setStyle().
+
+  It provides localization of strings that are visible to the user via translate().
+
+  It provides some magical objects like the clipboard().
+
+  It knowns about the application's windows.User can ask which widget is at a certain position using
+  widgetAt(),get a list of topLevelWidgets() and closeAllWindows(), etc.
+
+  It manages the application's mouse cursor handing.(setOverrideCursor())
+
+  System setting functions :
+    desktopSettingsAware()
+    setDesktopSettingsAware()
+    cursorFlashTime()
+    setCursorFlashTime
+    doubleClickInterval()
+    setDoubleClickInterval()
+    setKeyboardInputInterval()
+    wheelScrollLines()
+    setWheelScrollLines()
+    palette()
+    setPalette()
+    font()
+    setFont()
+    fornMetrics()
+
+  Event handing functions :
+    exec()
+    processEvents()
+    exit()
+    quit()
+    sendEvent()
+    postEvent()
+    sendPostedEvents()
+    removePostedEvents()
+    notify()
+
+  GUI Style functions :
+    style()
+    setStyle()
+
+  Text handing functions :
+    installTranslator()
+    removeTranslator()
+    translate()
+
+  Widget functions :
+    allWidgets()
+    topLevelWidgets()
+    activePopupWidget()
+    activeModalWidget()
+    clipboard()
+    focusWidget()
+    activeWindow()
+    widgetAt()
+
+  Advanced cursor handing functions :
+    overrideCursor()
+    setOverrideCursor()
+    restoreOverrideCursor()
+
+  Miscellaneous functions :
+    closeAllWindows()
+    startingUp()
+    closingDown()
+
+  static int QApplication::exec() >
+    enters the main event loop and waits until exit() is called,then returns the value that was set to exit().
+    it is necessary to call this function to start event handing.the main event loop receives events from
+    the window system and dispatches these to the application widgets.
+    generally,no user interaction can take place before calling exec().as a special case,modal widgets like
+    QMessageBox can be used before calling exec(),because modal widgets call exec() to start a local event
+    loop.
+    recommend that connect clean-up code to the aboutToQuit() signal,instead of putting it in application's
+    main() function.This is because,on some platforms the QApplication::exec() call may not return.
+
+    #  this function can only be called in main thread.
+
+  bool QApplication::event(QEvent *e) >
+    reimplements QGuiApplication::event(QEvent *e).this function is used to check if Qt event has been 
+    delivered to event loop.
+
+  void QCoreApplication::postEvent(QObject *receiver, QEvent *event, int priority = Qt::NormalEventPriority) >
+    adds the event @event,with the object @receiver as the receiver of the event,to an event queue and returns
+    immediately.
+    the event must be allocated on the heap since the post event queue will take ownership of the event and 
+    delete it once it has been posted,it is not safe to access the event after it has been posted.
+    when control returns to the main event loop,all events that are stored in the queue will be sent using
+    the notify() function.
+
+  void QCoreApplication::sendPostedEvents(QObject *receiver = nullptr, int event_type = 0) >
+    immediately dispatches all events which have been previously queued with QCoreApplication::posEvent() and
+    which are for the object @receiver and have the event type @event_type.
+    events from the window system are not dispatched by this function,but by processEvents().
+    if @receiver is nullptr,the events of event_type are sent for all objects,if @event_type is 0,all the events
+    are send for @receiver.
+
+  void QCoreApplication::processEvents(QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents) >
+    processes some pending events for the calling thread according to the specified @flags.
+    use of this function is discourage,instead,prefer to move long operations out of the GUI thread into
+    an auxiliary one and to completely avoid nested event loop processing.if event processing is really
+    necessary,consider using QEventLoop instead.
+    calling this function processes events only for the calling thread,and returns after all available events
+    (means the events had been queued before this function invocation) have been processed.the event post
+    while this function is running have to wait for next processing.
+
